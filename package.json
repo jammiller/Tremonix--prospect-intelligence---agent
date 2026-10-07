@@ -1,1 +1,1 @@
-{"name":"tremonix-pia","version":"0.1.0","private":true,"scripts":{"test":"node --test","build":"node build.mjs"},"type":"module"}
+{"name":"tremonix-pia","version":"0.1.0","private":true,"scripts":{"test":"node --test","build":"node build.mjs"},"type":"module","dependencies":{"@supabase/supabase-js":"^2.117.3"},"devDependencies":{"esbuild":"^0.28.2"}}
