@@ -25,3 +25,7 @@ CSV requires `companyName`. Optional columns: industry, location, employees, rev
 ## Next milestones
 
 Authenticated shared storage and access controls; approved public-data providers with provenance; CRM adapter; server-side AI summaries with evidence and review; scheduled buying-signal monitoring; consent-aware outreach workflows. No automated scraping or outreach is enabled by this MVP.
+
+## Authentication and cloud storage update
+
+The authenticated version replaces local-only active storage with Supabase PostgreSQL and email/password sign-in. Follow **SETUP.md** and apply **supabase/schema.sql** before use. The earlier local-only description documents the initial MVP; current active records are cloud-backed and per-account. Local records are retained solely for explicit migration. No AI, CRM, or research integration has been added.
