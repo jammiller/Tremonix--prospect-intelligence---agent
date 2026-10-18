@@ -3,9 +3,12 @@ import {build} from 'esbuild';
 await mkdir('dist',{recursive:true});
 for (const file of ['index.html','style.css']) await copyFile(file,`dist/${file}`);
 const url=process.env.NEXT_PUBLIC_SUPABASE_URL||'';
-const key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY||process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY||'';
-if(key && !key.startsWith('sb_publishable_')) {
- let payload;try{payload=JSON.parse(Buffer.from(key.split('.')[1], 'base64url').toString());}catch{}
- if(payload?.role!=='anon')throw new Error('Only a Supabase publishable or legacy anon key may be exposed.');
-}
+const candidates=[process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY].map(k=>(k||'').trim()).filter(Boolean);
+const jwtRole=k=>{try{return JSON.parse(Buffer.from(k.split('.')[1],'base64url').toString()).role;}catch{return undefined;}};
+const unsafe=k=>k.startsWith('sb_secret_')||['service_role','supabase_admin'].includes(jwtRole(k));
+const bad=candidates.find(unsafe);
+if(bad)throw new Error('A Supabase secret/service-role key was found in a NEXT_PUBLIC_* variable and would be exposed to the browser. Replace it with the publishable (or legacy anon) key.');
+const key=candidates.find(k=>k.startsWith('sb_publishable_')||jwtRole(k)==='anon')||'';
+if(candidates.length&&!key)console.warn('Warning: Supabase key is not a recognized publishable/anon key; building without it. The app will show "Setup required".');
+if(!url||!key)console.warn('Warning: Supabase URL/key not configured; the app will show "Setup required" at runtime.');
 await build({entryPoints:['app.js'],bundle:true,format:'esm',outfile:'dist/app.js',define:{'__SUPABASE_URL__':JSON.stringify(url),'__SUPABASE_KEY__':JSON.stringify(key)}});
