@@ -1,7 +1,7 @@
 import {mkdir,copyFile} from 'node:fs/promises';
 import {build} from 'esbuild';
 await mkdir('dist',{recursive:true});
-for (const file of ['index.html','style.css']) await copyFile(file,`dist/${file}`);
+for (const file of ['index.html','style.css','tremonix-logo.png']) await copyFile(file,`dist/${file}`);
 const url=process.env.NEXT_PUBLIC_SUPABASE_URL||'';
 const candidates=[process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY].map(k=>(k||'').trim()).filter(Boolean);
 const jwtRole=k=>{try{return JSON.parse(Buffer.from(k.split('.')[1],'base64url').toString()).role;}catch{return undefined;}};
